@@ -227,7 +227,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: cimg/python:3.10
+      - image: node:14.15.4-alpine3.12
     steps:
       - checkout
       - attach_workspace:
