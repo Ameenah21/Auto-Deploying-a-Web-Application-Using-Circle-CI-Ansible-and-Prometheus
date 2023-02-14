@@ -282,12 +282,7 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            # your code here
-            cd backend
-            npm install
+          
       - run:
           name: Install Ansible
           command: apk add --update --no-cache ansible
