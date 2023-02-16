@@ -288,7 +288,7 @@ jobs:
           at: ~/
       - run:
           name: Install tar and gzip
-          command: apk add --update tar gzip
+          command: apk add --update tar gzip curl
 
       - run:
           name: Install Ansible
