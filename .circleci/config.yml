@@ -284,7 +284,10 @@ jobs:
       # attach workspace
       - attach_workspace:
           at: ~/
-          
+      - run:
+          name: Install tar and gzip
+          command: apk add --update tar gzip
+           
       - run:
           name: Install Ansible
           command: apk add --update --no-cache ansible
