@@ -287,7 +287,7 @@ jobs:
       - run:
           name: Install tar and gzip
           command: apk add --update tar gzip
-           
+
       - run:
           name: Install Ansible
           command: apk add --update --no-cache ansible
@@ -300,11 +300,6 @@ jobs:
           name: Install AWS CLI
           command: apk add --update aws-cli
       
-      - run:
-          name: Install dependencies
-          command: |
-            cd backend
-            npm install
       - run:
           name: Deploy backend
           command: |
