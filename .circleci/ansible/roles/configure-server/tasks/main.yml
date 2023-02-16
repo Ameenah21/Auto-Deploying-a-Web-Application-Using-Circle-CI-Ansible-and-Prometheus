@@ -1,31 +1,30 @@
----
-- name: "update local apt repo."
-  become: true
+- name: Install Python
+  become: yes
+  package:
+    name: python3
+    state: present
+
+- name: Update/upgrade packages
+  become: yes
   apt:
+    upgrade: dist
     update_cache: yes
 
-- name: "upgrade apt packages"
-  become: true
+- name: Install Node.js
+  become: yes
   apt:
-    upgrade: yes
+    name: nodejs
+    state: present
 
-
-- name: "remove stale dependencies"
-  become: true
+- name: Install npm
+  become: yes
   apt:
-    autoremove: yes
+    name: npm
+    state: present
 
-- name: "install dependencies [nodejs and npm]."
-  become: true
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
-
-- name: "install pm2"
-  become: true
+- name: Install pm2
+  become: yes
   npm:
     name: pm2
     global: yes
-    production: yes
     state: present
