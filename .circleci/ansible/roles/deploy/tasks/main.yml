@@ -10,11 +10,16 @@
     upgrade: dist
     update_cache: yes
 
-- name: Install Node.js
-  become: yes
-  apt:
-    name: nodejs
-    state: present
+- name: "Install Node.js 13"
+  shell: |
+    # Install Node.js LTS version as our base Node.js version
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+
+    # Use n version manager to switch to Node.js v13.8.0
+    sudo npm install -g n
+    sudo n 13.8.0
+
 
 - name: Install npm
   become: yes
@@ -29,15 +34,35 @@
     global: yes
     state: present
 
-- name: extract artifact
-  become: yes
+
+- name: "Creates backend app directory"
+  file:
+    path: ~/backend-app
+    state: directory
+
+- name: "Unarchive backend files"
   unarchive:
     src: artifact.tar.gz
-    dest: .
+    dest: ~/backend-app
 
-- name: start app
-  become: yes
+- name: "Installing Node Dependencies"
   shell: |
-    npm install
+    cd ~/backend-app
+    npm i
+
+- name: "Executing Node app with PM2"
+  shell: |
+    cd ~/backend-app/dist
     pm2 stop default
-    pm2 start npm -- start
+    pm2 start main.js
+
+  register: execute_node
+
+- name: print message
+  debug:
+    msg: "{{ execute_node.stdout_lines }}"
+
+- name: "Configure pm2 to start as service"
+  shell: |
+    sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu"
+    pm2 save
