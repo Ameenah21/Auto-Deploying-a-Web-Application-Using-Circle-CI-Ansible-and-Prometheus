@@ -370,7 +370,7 @@ jobs:
             # Performing a get request with curl and checking for "ok" in the response
             if curl -s $API_URL/api/status | grep "ok"
             then
-                exit 0
+                exit 1
             else
                 exit 1
             fi
