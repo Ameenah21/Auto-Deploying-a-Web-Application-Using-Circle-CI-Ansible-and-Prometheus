@@ -349,7 +349,7 @@ jobs:
   smoke-test:
     docker:
       - image: alpine:latest
-      # Lightweight Docker image 
+      #Lightweight Docker image 
     steps:
       # Checkout code from git
       - checkout
