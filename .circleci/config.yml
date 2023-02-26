@@ -429,6 +429,8 @@ jobs:
       - checkout
       - install_awscli
       - install_nodejs
+      - attach_workspace:
+            at: ~/
       - run:
           name: Delete old stacks and Buckets
           command: |
