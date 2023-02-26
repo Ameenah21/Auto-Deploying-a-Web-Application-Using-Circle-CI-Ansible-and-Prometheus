@@ -305,7 +305,6 @@ jobs:
       - image: cimg/python:3.10
       # Docker image here that supports Ansible
     steps:
-      # Checkout code from git
       - checkout
       - install_ansible
       - install_awscli
