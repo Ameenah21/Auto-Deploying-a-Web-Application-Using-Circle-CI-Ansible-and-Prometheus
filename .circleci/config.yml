@@ -398,35 +398,26 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      - install_nodejs
+      - install_nodejs 
       - run:
-          name: Get old stack workflow id
+          name: Get old stack workflow & Update cloudfront distribution
           command: |
             export OldWorkflowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
             echo $OldWorkflowID >> ~/project/OldWorkflowID.txt
             cat ~/project/OldWorkflowID.txt
-      
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/OldWorkflowID.txt
-      - run:
-          name: Update cloudfront distribution
-          command: |
-            export OldWorkflowID=$(aws cloudformation \
-              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-              --no-paginate --output text)
-            echo $OldWorkflowID >> ~/project/OldWorkflowID.txt
-            cat ~/project/OldWorkflowID.txt
-            echo "${OldWorkflowID}"
             echo CurrentWorflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --stack-name InitialStack \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/OldWorkflowID.txt
             
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -441,7 +432,7 @@ jobs:
       - run:
           name: Delete old stacks and Buckets
           command: |
-            export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name==\`WorkflowID\`].Value" --no-paginate --output text)
+            export OldWorkflowID=$(cat ~/project/OldWorkflowID.txt)
             export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
@@ -489,5 +480,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      - cleanup:
-          requires: [cloudfront-update]
+      #- cleanup:
+          #requires: [cloudfront-update]
